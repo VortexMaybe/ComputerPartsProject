@@ -1,0 +1,248 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model IEnumerable<ComputerParts.Models.HardwareComponent>
+
+@{
+    ViewData["Title"] = "Списък части";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="container-fluid mt-4 px-4">
+    <div class="row">
+        <div class="col-md-2 animate__animated animate__fadeInLeft">
+            <div class="card border-0 shadow-sm p-3 mb-4" style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); position: sticky; top: 20px;">
+                <h5 class="text-primary mb-3"><i class="bi bi-filter-right"></i> Филтри</h5>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-filter active w-100 text-start" onclick="filterCategory('all', this)">
+                        <i class="bi bi-grid-fill me-2"></i> Всички
+                    </button>
+                    <button class="btn btn-filter w-100 text-start" onclick="filterCategory('Процесор', this)">
+                        <i class="bi bi-cpu me-2"></i> Процесори
+                    </button>
+                    <button class="btn btn-filter w-100 text-start" onclick="filterCategory('Видеокарта', this)">
+                        <i class="bi bi-gpu-card me-2"></i> Видеокарти
+                    </button>
+                    <button class="btn btn-filter w-100 text-start" onclick="filterCategory('RAM', this)">
+                        <i class="bi bi-memory me-2"></i> RAM памет
+                    </button>
+                    <button class="btn btn-filter w-100 text-start" onclick="filterCategory('SSD', this)">
+                        <i class="bi bi-device-hdd me-2"></i> SSD / HDD
+                    </button>
+                </div>
+
+                @* ЗАЩИТА: Само Админ вижда бутона "Добави част" *@
+                @if (User.IsInRole("Admin"))
+                {
+                    <hr class="text-secondary">
+                    <a asp-action="Create" class="btn btn-success w-100 shadow-sm mt-2">
+                        <i class="bi bi-plus-lg"></i> Добави част
+                    </a>
+                }
+            </div>
+        </div>
+
+        <div class="col-md-10">
+            @* Статистиките (остават видими за всички) *@
+            <div class="row mb-4 animate__animated animate__fadeInDown">
+                <div class="col-md-4">
+                    <div class="card bg-primary bg-opacity-10 border-primary border-opacity-25 p-3 text-center">
+                        <h6 class="text-muted text-uppercase small m-0">Общо компоненти</h6>
+                        <h3 class="fw-bold text-primary mb-0">@Model.Count()</h3>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-success bg-opacity-10 border-success border-opacity-25 p-3 text-center">
+                        <h6 class="text-muted text-uppercase small m-0">Обща стойност</h6>
+                        <h3 class="fw-bold text-success mb-0">@Model.Sum(x => x.Price).ToString("F2") €</h3>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-info bg-opacity-10 border-info border-opacity-25 p-3 text-center">
+                        <h6 class="text-muted text-uppercase small m-0">Средна цена</h6>
+                        <h3 class="fw-bold text-info mb-0">@(Model.Any() ? (Model.Average(x => x.Price)).ToString("F2") : "0") €</h3>
+                    </div>
+                </div>
+            </div>
+
+            @* Търсачка *@
+            <div class="row mb-3 animate__animated animate__fadeIn">
+                <div class="col-md-12">
+                    <form asp-action="Index" method="get">
+                        <div class="input-group shadow-sm" style="height: 46px; border-radius: 50px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
+                            <input type="text" name="searchString"
+                                   class="form-control bg-dark text-white border-0"
+                                   placeholder="Търси по име или цена..."
+                                   value="@Context.Request.Query["searchString"]"
+                                   style="padding-left: 25px; box-shadow: none;" />
+
+                            <button type="submit" class="btn btn-primary"
+                                    style="border-radius: 0 !important; margin: 0 !important; padding: 0 25px; border: none; font-weight: bold;">
+                                Търси
+                            </button>
+
+                            <a asp-action="Index" class="btn btn-secondary d-flex align-items-center"
+                               style="border-radius: 0 !important; margin: 0 !important; padding: 0 20px; border: none; border-left: 1px solid rgba(255,255,255,0.1); text-decoration: none;">
+                                Изчисти
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card shadow border-0 bg-transparent animate__animated animate__fadeInUp">
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0 text-white" id="partsTable">
+                        <thead class="table-dark">
+                            <tr>
+                                <th class="ps-4">Снимка</th>
+                                <th>Име</th>
+                                <th>Производител</th>
+                                <th>Категория</th>
+                                <th>
+                                    <a asp-action="Index" asp-route-sortOrder="@ViewData["PriceSortParm"]" class="text-white text-decoration-none">
+                                        Цена ↕
+                                    </a>
+                                </th>
+                                <th class="text-center">Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                string imageSource = !string.IsNullOrEmpty(item.ImageUrl) ? item.ImageUrl : "/images/default_part.jpg";
+
+                                <tr data-category="@item.Type">
+                                    <td class="ps-4">
+                                        <img src="@imageSource"
+                                             alt="Image"
+                                             class="product-img"
+                                             onerror="this.onerror=null;this.src='/images/default_part.jpg';" />
+                                    </td>
+                                    <td class="align-middle fw-bold">@Html.DisplayFor(modelItem => item.Name)</td>
+                                    <td class="align-middle text-muted">@Html.DisplayFor(modelItem => item.Manufacturer)</td>
+                                    <td class="align-middle">
+                                        <span class="badge bg-secondary px-3 py-2 rounded-pill category-badge">@item.Type</span>
+                                    </td>
+                                    <td class="align-middle">
+                                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2 rounded-pill">
+                                            <i class="bi bi-tag-fill me-1"></i> @item.Price.ToString("F2") €
+                                        </span>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <div class="btn-group" role="group">
+                                            @* ЗАЩИТА: Само Админ вижда бутона Редактирай *@
+                                            @if (User.IsInRole("Admin"))
+                                            {
+                                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-warning btn-sm rounded-pill px-3">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </a>
+                                            }
+
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info btn-sm rounded-pill px-3 mx-1">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+
+                                            @* ЗАЩИТА: Само Админ вижда бутона Изтрий *@
+                                            @if (User.IsInRole("Admin"))
+                                            {
+                                                <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3"
+                                                        onclick="confirmDelete('@item.Id', '@item.Name')">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                                <form id="delete-form-@item.Id" asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:none;">
+                                                    @Html.AntiForgeryToken()
+                                                </form>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function filterCategory(category, btn) {
+            document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const rows = document.querySelectorAll('#partsTable tbody tr');
+            rows.forEach(row => {
+                const rowCategory = row.getAttribute('data-category');
+                if (category === 'all' ||
+                    rowCategory.includes(category) ||
+                    (category === 'SSD' && rowCategory === 'HDD')) {
+                    row.style.display = '';
+                    row.classList.add('animate__animated', 'animate__fadeIn');
+                } else {
+                    row.style.display = 'none';
+                    row.classList.remove('animate__animated', 'animate__fadeIn');
+                }
+            });
+        }
+
+        function confirmDelete(id, name) {
+            Swal.fire({
+                title: 'ВНИМАНИЕ!',
+                html: `Ще изтриете <b>${name}</b> от таблицата.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ff4d4d',
+                cancelButtonColor: '#444',
+                confirmButtonText: 'Да!',
+                cancelButtonText: 'Отказ.',
+                background: '#1a1a1a',
+                color: '#fff',
+                customClass: { popup: 'rounded-popup' }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form-' + id).submit();
+                }
+            });
+        }
+    </script>
+}
+
+<style>
+    /* Стилизация на бутоните за филтър */
+    .btn-filter {
+        border: none !important;
+        background: transparent !important;
+        color: #adb5bd !important;
+        padding: 10px 15px !important;
+        border-radius: 12px !important;
+        transition: all 0.3s ease;
+    }
+
+        .btn-filter:hover {
+            background: rgba(255,255,255,0.1) !important;
+            color: white !important;
+        }
+
+        .btn-filter.active {
+            background: #0d6efd !important;
+            color: white !important;
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+        }
+
+    .rounded-popup {
+        border-radius: 25px !important;
+        border: 1px solid #444;
+    }
+
+    /* Добавяме стил за картинките, ако си го пропуснал в site.css */
+    .product-img {
+        width: 60px;
+        height: 60px;
+        object-fit: contain;
+        border-radius: 8px;
+        background: rgba(255,255,255,0.05);
+        padding: 5px;
+    }
+</style>
