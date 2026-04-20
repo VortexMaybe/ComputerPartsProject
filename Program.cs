@@ -1,4 +1,4 @@
-﻿using ComputerParts.Data;
+using ComputerParts.Data;
 using ComputerParts.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;

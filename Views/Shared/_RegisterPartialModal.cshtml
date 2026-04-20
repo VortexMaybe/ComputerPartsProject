@@ -1,0 +1,95 @@
+﻿@* Премахнати @page и @model за избягване на грешки *@
+
+<div class="modal fade glass-modal" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        @* Модалът започва тук *@
+        <div class="modal-content text-white border-0 p-4 rounded-4" style="background: rgba(20, 20, 20, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.05)!important;">
+
+            <div class="modal-header border-0 pb-0">
+                <h3 class="modal-title fw-bold text-primary" id="registerModalLabel">
+                    <i class="bi bi-person-plus me-2"></i> Регистрация
+                </h3>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body pt-3">
+                @* Използваме ID за AJAX формата *@
+                <form id="ajaxRegisterForm" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div id="registerErrorSummary" class="text-danger small mb-3" style="display:none;"></div>
+
+                    <div class="input-group mb-3 dark-input-group" style="position: relative;">
+                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                        <input name="Input.Email" type="email" class="form-control" placeholder="Имейл" required />
+                    </div>
+
+                    <div class="input-group mb-3 dark-input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        <input name="Input.Password" type="password" class="form-control" placeholder="Парола" required />
+                    </div>
+
+                    <div class="input-group mb-4 dark-input-group">
+                        <span class="input-group-text"><i class="bi bi-shield-lock"></i></span>
+                        <input name="Input.ConfirmPassword" type="password" class="form-control" placeholder="Потвърди паролата" required />
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" id="btnRegisterSubmit" class="btn btn-primary btn-lg rounded-pill shadow-neon">
+                            <span id="regBtnText">Регистрирай се</span>
+                            <span id="regBtnSpinner" class="spinner-border spinner-border-sm" style="display:none;"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer border-0 pt-0 text-center d-block">
+                <small class="text-muted">Вече имаш профил? </small>
+                <a href="#" class="text-primary text-decoration-none fw-bold small" onclick="$('#registerModal').modal('hide'); $('#loginModal').modal('show'); return false;">Вход</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Скриптът за AJAX регистрация - сложи го най-добре в _Layout.cshtml или тук *@
+<script>
+    document.getElementById('ajaxRegisterForm')?.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const form = $(this);
+        const modalContent = form.closest('.modal-content');
+        const btnText = $('#regBtnText');
+        const spinner = $('#regBtnSpinner');
+
+        // Показваме лоудър
+        btnText.hide();
+        spinner.show();
+
+        $.ajax({
+            url: '/Identity/Account/Register',
+            type: 'POST',
+            data: form.serialize(),
+            success: function (response) {
+                // Ако регистрацията е успешна (сървърът препраща)
+                window.location.reload();
+            },
+            error: function (xhr) {
+                // ВРЪЩА ГРЕШКА (напр. зает имейл)
+                spinner.hide();
+                btnText.show();
+
+                // 1. Ефектът с разклащането
+                modalContent.addClass('shake-element');
+                setTimeout(() => modalContent.removeClass('shake-element'), 500);
+
+                // 2. Показваме балончето
+                $('.error-bubble').remove();
+                const bubble = $('<div class="error-bubble animate__animated animate__fadeInUp">Този имейл е зает или паролата е слаба!</div>');
+                $('input[name="Input.Email"]').parent().append(bubble);
+
+                // Премахваме балончето след 3 секунди
+                setTimeout(() => bubble.fadeOut(() => bubble.remove()), 3000);
+            }
+        });
+    });
+</script>

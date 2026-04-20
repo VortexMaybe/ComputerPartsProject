@@ -1,0 +1,52 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Регистрация";
+    // Махаме layout-а, защото модалът не се нуждае от целия хедър и футър
+    Layout = null;
+}
+
+<div class="modal fade glass-modal" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-white border-0 p-4 rounded-4" style="background: rgba(20, 20, 20, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.05)!important;">
+            <div class="modal-header border-0 pb-0">
+                <h3 class="modal-title fw-bold text-primary" id="registerModalLabel">
+                    <i class="bi bi-person-plus me-2"></i> Регистрация
+                </h3>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body pt-3">
+                <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                    <div class="input-group mb-3 dark-input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <input asp-for="Input.Email" class="form-control" placeholder="Потребителско име или Имейл" required />
+                    </div>
+
+                    <div class="input-group mb-3 dark-input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        <input asp-for="Input.Password" type="password" class="form-control" placeholder="Парола" required />
+                    </div>
+
+                    <div class="input-group mb-4 dark-input-group">
+                        <span class="input-group-text"><i class="bi bi-shield-lock"></i></span>
+                        <input asp-for="Input.ConfirmPassword" type="password" class="form-control" placeholder="Потвърди паролата" required />
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-neon">
+                            Регистрирай се
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer border-0 pt-0 text-center d-block">
+                <small class="text-muted">Вече имаш профил? </small>
+                <a href="#" class="text-primary text-decoration-none fw-bold small" onclick="$('#registerModal').modal('hide'); $('#loginModal').modal('show'); return false;">Вход</a>
+            </div>
+        </div>
+    </div>
+</div>

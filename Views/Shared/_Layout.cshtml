@@ -7,10 +7,32 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ComputerParts.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    @* Икони и Анимации *@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <style>
+        /* Светещ Скролбар - добавка към дизайна */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #0d6efd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #0d6efd;
+        }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: #00ffcc;
+            }
+    </style>
 </head>
-<body>
+<body class="bg-dark text-light">
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom border-secondary box-shadow mb-3">
             <div class="container-fluid">
@@ -30,22 +52,27 @@
                             <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Privacy">Поверителност</a>
                         </li>
                     </ul>
-
-                    @* Свързваме бутоните за Вход/Регистрация *@
                     <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3 animate__animated animate__fadeIn">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted bg-dark">
-        <div class="container text-center">
-            &copy; 2026 - ComputerParts - <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-secondary">Privacy</a>
+    @* --- МОДАЛИ ЗА ВХОД И РЕГИСТРАЦИЯ --- *@
+    <div id="auth-modals">
+        @await Html.PartialAsync("_LoginPartialModal")
+        @await Html.PartialAsync("_RegisterPartialModal")
+    </div>
+
+    <footer class="border-top footer text-muted bg-dark mt-auto">
+        <div class="container text-center py-3">
+            &copy; 2026 - ComputerParts - <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-secondary text-decoration-none">Privacy</a>
         </div>
     </footer>
 
@@ -53,17 +80,49 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        window.addEventListener('beforeunload', function () {
-            const loader = document.createElement('div');
-            loader.id = 'page-loader';
-            document.body.appendChild(loader);
 
-            setTimeout(() => {
-                loader.style.width = '100%';
-            }, 10);
+    <script>
+        // 1. Дефинираме функцията за ефекти ПЪРВО
+        function triggerErrorEffects(modalContent, inputField, message) {
+            if (!modalContent || !inputField) return;
+
+            modalContent.addClass('shake-element');
+            $('.error-bubble').remove();
+            var bubble = $('<div class="error-bubble animate__animated animate__headShake">' + message + '</div>');
+            inputField.closest('.input-group').css('position', 'relative').append(bubble);
+
+            setTimeout(function() { modalContent.removeClass('shake-element'); }, 500);
+            setTimeout(function() { bubble.fadeOut(function() { $(this).remove(); }); }, 3000);
+        }
+
+        $(document).ready(function () {
+            // 2. Логика за Вход
+            $(document).on('submit', '#ajaxLoginForm', function (e) {
+                e.preventDefault(); // СПИРА рефреша
+                var form = $(this);
+                var modalContent = form.closest('.modal-content');
+                var passwordInput = form.find('input[name="Input.Password"]');
+
+                $.ajax({
+                    url: '/Identity/Account/Login',
+                    type: 'POST',
+                    data: form.serialize(),
+                    success: function (response) {
+                        // Ако в отговора се съдържа формата, значи има грешка в данните
+                        if (response.indexOf('ajaxLoginForm') !== -1) {
+                            triggerErrorEffects(modalContent, passwordInput, "Грешен имейл или парола!");
+                        } else {
+                            window.location.reload();
+                        }
+                    },
+                    error: function () {
+                        triggerErrorEffects(modalContent, passwordInput, "Грешка при връзката!");
+                    }
+                });
+            });
         });
     </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

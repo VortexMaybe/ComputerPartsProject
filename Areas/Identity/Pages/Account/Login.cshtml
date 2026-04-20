@@ -1,0 +1,51 @@
+﻿@page
+@model LoginModel
+@{
+    ViewData["Title"] = "Вход";
+    Layout = null;
+}
+
+<div class="modal fade glass-modal" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-white border-0 p-4 rounded-4" style="background: rgba(20, 20, 20, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.05)!important;">
+            <div class="modal-header border-0 pb-0">
+                <h3 class="modal-title fw-bold text-success" id="loginModalLabel">
+                    <i class="bi bi-box-arrow-in-right me-2"></i> Вход
+                </h3>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body pt-3">
+                <form id="account" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                    <div class="input-group mb-3 dark-input-group">
+                        <span class="input-group-text"><i class="bi bi-envelope-at"></i> / <i class="bi bi-person"></i></span>
+                        <input asp-for="Input.Email" class="form-control" placeholder="Имейл или Потребителско име" required />
+                    </div>
+
+                    <div class="input-group mb-2 dark-input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        <input asp-for="Input.Password" type="password" class="form-control" placeholder="Парола" required />
+                    </div>
+
+                    <div class="form-check mb-4 mt-2">
+                        <input asp-for="Input.RememberMe" class="form-check-input bg-dark border-secondary" />
+                        <label asp-for="Input.RememberMe" class="form-check-label text-muted small">Запомни ме</label>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg rounded-pill shadow-neon-success">
+                            Влез
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer border-0 pt-0 text-center d-block">
+                <small class="text-muted">Нямаш профил? </small>
+                <a href="#" class="text-primary text-decoration-none fw-bold small" onclick="$('#loginModal').modal('hide'); $('#registerModal').modal('show'); return false;">Регистрация</a>
+            </div>
+        </div>
+    </div>
+</div>

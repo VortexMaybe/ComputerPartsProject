@@ -20,14 +20,22 @@ namespace ComputerParts.Models
                     await roleManager.CreateAsync(new IdentityRole("Admin"));
                 }
 
-                var adminEmail = "admin@test.bg";
-                var adminUser = await userManager.FindByEmailAsync(adminEmail);
+                string adminEmail = "admin@test.bg";
+                string adminPassword = "admin1234";
 
-                if (adminUser != null)
+                if (await userManager.FindByEmailAsync(adminEmail) == null)
                 {
-                    if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
+                    var user = new IdentityUser
                     {
-                        await userManager.AddToRoleAsync(adminUser, "Admin");
+                        UserName = adminEmail,
+                        Email = adminEmail,
+                        EmailConfirmed = true
+                    };
+
+                    var result = await userManager.CreateAsync(user, adminPassword);
+                    if (result.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(user, "Admin");
                     }
                 }
 

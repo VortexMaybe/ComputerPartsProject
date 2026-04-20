@@ -1,4 +1,15 @@
-﻿html {
+﻿/* =========================================
+   1. ГЛОБАЛНИ СТИЛОВЕ И ПРОМЕНЛИВИ
+   ========================================= */
+:root {
+    --primary-glow: #0d6efd;
+    --success-glow: #198754;
+    --error-color: #ff4b2b;
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+html {
     font-size: 14px;
     position: relative;
     min-height: 100%;
@@ -12,192 +23,28 @@
 
 body {
     margin-bottom: 60px;
-    background-color: #1a1a1a;
-    color: white;
-}
-
-.container {
-    max-width: 95% !important;
-}
-
-.card {
-    border-radius: 15px !important;
-    border: none;
-    overflow: hidden;
-    background-color: transparent !important;
-}
-
-.table {
-    background-color: transparent !important;
-    color: white !important;
-}
-
-    .table td {
-        padding: 20px 15px !important;
-        vertical-align: middle;
-    }
-
-.product-img {
-    width: 80px !important;
-    height: 80px !important;
-    object-fit: contain;
-    transition: transform 0.3s ease;
-    cursor: pointer;
-    border-radius: 8px;
-}
-
-    .product-img:hover {
-        transform: scale(1.5);
-        z-index: 50;
-        position: relative;
-    }
-
-.form-control {
-    border-radius: 50px;
-    border: 1px solid #444;
-    background-color: #2b2b2b;
-    color: white;
-    padding: 10px 20px;
-}
-
-    .form-control:focus {
-        background-color: #333;
-        color: white;
-        box-shadow: 0 0 0 0.25rem rgba(37, 140, 251, 0.25);
-    }
-
-/* ОБЛИ БУТОНИ */
-.btn {
-    border-radius: 50px !important;
-    padding-left: 20px;
-    padding-right: 20px;
-    font-weight: bold;
-    transition: all 0.3s ease;
-}
-
-    .btn:hover {
-        transform: translateY(-2px);
-    }
-
-.btn-outline-info {
-    color: #0dcaf0 !cite: 10;
-    border-color: #0dcaf0 !cite: 10;
-}
-
-    .btn-outline-info:hover {
-        background-color: #0dcaf0;
-        color: #000 !cite: 10;
-    }
-
-.btn-group .btn {
-    margin: 0 5px !important;
-}
-
-.badge {
-    padding: 8px 12px;
-    border-radius: 50px;
-    font-weight: 500;
-    text-transform: uppercase;
-}
-
-.btn-group {
-    display: flex;
-    justify-content: center;
-    gap: 8px; 
-}
-
-.table-hover tbody tr:hover {
-    background-color: rgba(255, 255, 255, 0.05) !important;
-    transition: 0.3s;
-}
-.input-group {
-    border-radius: 50px;
-    overflow: hidden;
-    background-color: #2b2b2b;
-    border: 1px solid #444;
-}
-
-    .input-group .form-control {
-        border-top-right-radius: 0 !important;
-        border-bottom-right-radius: 0 !important;
-        border: none;
-        background-color: transparent;
-    }
-
-    .input-group .btn {
-        border-top-left-radius: 0 !important;
-        border-bottom-left-radius: 0 !important;
-        margin-left: 0 !important;
-        padding-left: 25px;
-        padding-right: 25px;
-    }
-
-    .input-group:focus-within {
-        box-shadow: 0 0 0 0.25rem rgba(37, 140, 251, 0.25);
-        border-color: #258cfb;
-    }
-
-.table td, .table th {
-    vertical-align: middle !important;
-}
-
-.d-flex.align-items-center {
-    display: flex;
-    align-items: center;
-}
-
-.input-group {
-    display: flex;
-    align-items: stretch;
-}
-.table-hover tbody tr:hover {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    color: white !important;
-}
-
-    .table-hover tbody tr:hover td {
-        color: white !important;
-    }
-
-.success-toast {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #28a745; 
-    color: white;
-    padding: 15px 30px;
-    border-radius: 50px;
-    font-weight: bold;
-    z-index: 9999;
-    pointer-events: none;
-    opacity: 0;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    animation: floatUpAndFade 2s ease-out forwards;
-}
-
-@keyframes floatUpAndFade {
-    0% {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0.8);
-    }
-
-    20% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
-    }
-
-    100% {
-        opacity: 0;
-        transform: translate(-50%, -150%);
-    }
-}
-body {
-    background: linear-gradient(-45deg, #0f0f0f, #1a1a1a, #0d1117, #000000);
+    background: linear-gradient(-45deg, #0a0a0a, #1a1a1a, #0d1117, #000000);
     background-size: 400% 400%;
     animation: gradientBG 15s ease infinite;
     color: white;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    overflow-x: hidden;
 }
+
+    /* Ефект на "звездно небе" или частици (дискретно в бекграунда) */
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px), radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px);
+        background-size: 550px 550px, 350px 350px;
+        background-position: 0 0, 40px 60px;
+        opacity: 0.05;
+        z-index: -1;
+    }
 
 @keyframes gradientBG {
     0% {
@@ -212,83 +59,207 @@ body {
         background-position: 0% 50%;
     }
 }
-.table tbody tr {
-    transition: all 0.3s ease;
-    cursor: pointer;
+
+/* =========================================
+   2. КОМПОНЕНТИ (КАРТИ, ТАБЛИЦИ, БУТОНИ)
+   ========================================= */
+.container {
+    max-width: 95% !important;
 }
 
-    .table tbody tr:hover {
-        transform: scale(1.01);
-        background-color: rgba(255, 255, 255, 0.05) !important;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+/* Glassmorphism Карти */
+.card {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 20px !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .card:hover {
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
     }
 
-.product-img {
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+/* Таблици */
+.table {
+    background-color: transparent !important;
+    color: white !important;
+    border-collapse: separate;
+    border-spacing: 0 10px;
 }
 
-.table tbody tr:hover .product-img {
-    transform: scale(1.2) rotate(5deg);
+    .table td, .table th {
+        vertical-align: middle !important;
+        padding: 15px !important;
+        border: none !important;
+    }
+
+#partsTable tbody tr {
+    background: rgba(255, 255, 255, 0.02);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 10px;
 }
-.card {
-    background: rgba(255, 255, 255, 0.03) !important;
-    backdrop-filter: blur(10px); 
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 20px !important;
-    overflow: hidden;
+
+    #partsTable tbody tr:hover {
+        background: rgba(255, 255, 255, 0.08) !important;
+        transform: scale(1.01) translateX(8px);
+        box-shadow: -5px 5px 15px rgba(0,0,0,0.3);
+    }
+
+/* Снимки на продукти */
+.product-img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border-radius: 8px;
 }
+
+tr:hover .product-img {
+    transform: scale(1.6) rotate(5deg);
+    z-index: 10;
+}
+
+/* Бутони */
+.btn {
+    border-radius: 50px !important;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+    .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+.btn-outline-info:hover {
+    box-shadow: 0 0 15px #0dcaf0;
+}
+
+.btn-outline-warning:hover {
+    box-shadow: 0 0 15px #ffc107;
+}
+
+.btn-outline-danger:hover {
+    box-shadow: 0 0 15px #dc3545;
+}
+
+/* =========================================
+   3. ФОРМИ И ВХОДЯЩИ ДАННИ (NEON STYLE)
+   ========================================= */
+.dark-input-group {
+    position: relative;
+    overflow: visible !important; /* Важно за балончето */
+}
+
+    .dark-input-group .input-group-text {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid var(--glass-border) !important;
+        color: rgba(255, 255, 255, 0.6) !important;
+        border-radius: 50px 0 0 50px !important;
+    }
+
+    .dark-input-group .form-control {
+        background: rgba(0, 0, 0, 0.2) !important;
+        border: 1px solid var(--glass-border) !important;
+        color: white !important;
+        border-radius: 0 50px 50px 0 !important;
+        padding: 10px 20px;
+    }
+
+        .dark-input-group .form-control:focus {
+            box-shadow: 0 0 15px rgba(13, 110, 253, 0.4) !important;
+            border-color: var(--primary-glow) !important;
+        }
+
+/* =========================================
+   4. МОДАЛИ И ГРЕШКИ
+   ========================================= */
+.glass-modal .modal-content {
+    background: rgba(20, 20, 20, 0.8) !important;
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 25px !important;
+}
+
+.error-bubble {
+    position: absolute !important;
+    background: var(--error-color) !important;
+    color: white !important;
+    padding: 6px 14px !important;
+    border-radius: 10px !important;
+    font-size: 12px !important;
+    font-weight: bold;
+    top: -40px !important;
+    right: 10px !important;
+    z-index: 10000 !important;
+    box-shadow: 0 4px 15px rgba(255, 75, 43, 0.4) !important;
+    white-space: nowrap !important;
+    animation: fadeInDown 0.3s ease;
+}
+
+    .error-bubble::after {
+        content: '';
+        position: absolute;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 6px solid var(--error-color);
+        bottom: -6px;
+        right: 15px;
+    }
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+
+    20% {
+        transform: translateX(-8px);
+    }
+
+    40% {
+        transform: translateX(8px);
+    }
+
+    60% {
+        transform: translateX(-8px);
+    }
+
+    80% {
+        transform: translateX(8px);
+    }
+}
+
+.shake-element {
+    animation: shake 0.4s ease-in-out !important;
+}
+
+/* =========================================
+   5. ДОПЪЛНИТЕЛНИ ЕФЕКТИ
+   ========================================= */
 #page-loader {
     position: fixed;
     top: 0;
     left: 0;
     width: 0%;
     height: 3px;
-    background: #0d6efd;
-    z-index: 9999;
+    background: linear-gradient(to right, #0d6efd, #00ffcc);
+    z-index: 10001;
     transition: width 0.4s ease;
-}
-.btn-outline-info:hover, .btn-outline-warning:hover, .btn-outline-danger:hover {
-    box-shadow: 0 0 15px currentColor; 
-    transform: scale(1.1);
-}
-#partsTable tbody tr {
-    transition: all 0.3s ease;
-    cursor: pointer;
+    box-shadow: 0 0 10px #0d6efd;
 }
 
-    #partsTable tbody tr:hover {
-        background: rgba(255, 255, 255, 0.08) !important;
-        transform: scale(1.01) translateX(5px); /* Леко се увеличава и мръдва надясно */
-        box-shadow: 10px 0px 20px rgba(0,0,0,0.2);
-    }
-
-.badge {
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 600;
-}
-
-.bg-success.bg-opacity-10 {
-    box-shadow: 0 0 10px rgba(25, 135, 84, 0.2);
-    border: 1px solid rgba(25, 135, 84, 0.4) !important;
-}
-
-.bg-secondary {
-    background-color: rgba(108, 117, 125, 0.2) !important;
-    border: 1px solid rgba(108, 117, 125, 0.5);
-}
-
-.input-group input:focus {
-    background: rgba(255, 255, 255, 0.1) !important;
-    border-color: #0d6efd !important;
-    box-shadow: 0 0 15px rgba(13, 110, 253, 0.4) !important;
-}
-
-.product-img {
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-tr:hover .product-img {
-    transform: scale(1.5) rotate(5deg);
-    z-index: 10;
+.success-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--success-glow);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 10px;
+    z-index: 9999;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
 }
